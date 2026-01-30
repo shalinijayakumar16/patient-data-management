@@ -572,7 +572,8 @@
     let allPatients = [];
 
     window.onload = () => {
-      fetch('http://localhost:5000/api/patients')
+      fetch('https://patient-data-management.onrender.com/api/patients')
+
         .then(res => res.json())
         .then(data => {
           allPatients = data;
@@ -663,7 +664,8 @@
         return;
       }
 
-      fetch('http://localhost:5000/api/patients', {
+      fetch('https://patient-data-management.onrender.com/api/patients', {
+
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -689,7 +691,8 @@
     }
 
     function viewVisitHistory(patientId) {
-      fetch(`http://localhost:5000/api/visits/${patientId}`)
+      fetch(`https://patient-data-management.onrender.com/api/visits/${patientId}`)
+
         .then(res => {
           if (!res.ok) throw new Error("No visits found.");
           return res.json();
@@ -753,7 +756,7 @@
     }
 
     function openEditModal(id) {
-      fetch(`http://localhost:5000/api/patients/${id}`)
+      fetch(`https://patient-data-management.onrender.com/api/patients/${id}`)
         .then(res => res.json())
         .then(data => {
           document.getElementById('editId').value = data.id;
@@ -784,7 +787,7 @@
         address: document.getElementById('editAddress').value
       };
       
-      fetch(`http://localhost:5000/api/patients/${id}`, {
+      fetch(`https://patient-data-management.onrender.com/api/patients/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedData)
@@ -817,7 +820,7 @@
 
     function deletePatient(id) {
       if (confirm('Are you sure you want to delete this patient? This action cannot be undone.')) {
-        fetch(`http://localhost:5000/api/patients/${id}`, {
+        fetch(`https://patient-data-management.onrender.com/api/patients/${id}`, {
           method: 'DELETE'
         })
           .then(() => {
@@ -833,7 +836,7 @@
     }
 
     function addVisit(id) {
-      fetch(`http://localhost:5000/api/patients/${id}`)
+      fetch(`https://patient-data-management.onrender.com/api/patients/${id}`)
         .then(res => res.json())
         .then(data => {
           document.getElementById('visitPatientId').value = data.id;
@@ -864,7 +867,7 @@
         return;
       }
       
-      fetch('http://localhost:5000/api/visits', {
+      fetch('https://patient-data-management.onrender.com/api/visits', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ patient_id, purpose_of_visit: purpose })

@@ -453,19 +453,21 @@
   async function fetchPatients() {
     try {
       // 👉 Fetch patient queue (pending)
-      const res = await fetch("http://localhost:5000/api/diagnosis/pending");
+      const res = await fetch("https://patient-data-management.onrender.com/api/diagnosis/pending");
       const patients = await res.json();
 
       const tbody = document.querySelector("#patients-table tbody");
       tbody.innerHTML = "";
 
       // 👉 Fetch Pending Count from API
-      const pendingRes = await fetch("http://localhost:5000/api/diagnosis/pending-count");
+      const pendingRes = await fetch("https://patient-data-management.onrender.com/api/diagnosis/pending-count");
+
       const pendingData = await pendingRes.json();
       document.getElementById("pending-count").textContent = pendingData.pending_count;
 
       // 👉 Fetch Today Count from API
-      const todayRes = await fetch("http://localhost:5000/api/diagnosis/today-count");
+      const todayRes = await fetch("https://patient-data-management.onrender.com/api/diagnosis/today-count");
+
       const todayData = await todayRes.json();
       document.getElementById("today-count").textContent = todayData.today_count;
 
@@ -522,7 +524,7 @@
 
 
   function viewReport(patientId, patientName) {
-      fetch(`http://localhost:5000/api/diagnosis/patient/${patientId}`)
+      fetch(`https://patient-data-management.onrender.com/api/diagnosis/patient/${patientId}`)
         .then(res => res.json())
         .then(data => {
           if (!Array.isArray(data)) {
@@ -603,7 +605,7 @@ function closeReport() {
   document.getElementById("historyPatientName").innerText =
     "History for " + patientName;
 
-  fetch(`http://localhost:5000/api/diagnosis/patient/${patientId}`)
+  fetch(`https://patient-data-management.onrender.com/api/diagnosis/patient/${patientId}`)
     .then(res => res.json())
     .then(data => {
       if (!Array.isArray(data) || data.length === 0) {
@@ -705,7 +707,8 @@ function openPopup(patient) {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/doctor/submit", {
+      const res = await fetch("https://patient-data-management.onrender.com/api/doctor/submit", {
+
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -796,7 +799,7 @@ function openPopup(patient) {
 
   async function skipDiagnosis(id) {
     try {
-      const res = await fetch(`http://localhost:5000/api/diagnosis/skip/${id}`, {
+      const res = await fetch(`https://patient-data-management.onrender.com/api/diagnosis/skip/${id}`, {
         method: 'PATCH'
       });
 

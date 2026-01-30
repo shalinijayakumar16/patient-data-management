@@ -389,7 +389,8 @@
     document.getElementById('errorMessage').style.display = 'none';
 
     // Send to backend
-    fetch('http://localhost:5000/api/patients', {
+    fetch('https://patient-data-management.onrender.com/api/patients', {
+
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData)

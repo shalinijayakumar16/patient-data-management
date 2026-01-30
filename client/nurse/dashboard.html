@@ -603,7 +603,8 @@
       const name = document.getElementById('nameFilter').value;
       const dob = document.getElementById('dobFilter').value;
 
-      fetch(`http://localhost:5000/api/patients/filter?id=${id}&name=${name}&dob=${dob}`)
+      fetch(`https://patient-data-management.onrender.com/api/patients/filter?id=${id}&name=${name}&dob=${dob}`)
+
         .then(res => res.json())
         .then(data => {
           const tbody = document.querySelector('#patientTable tbody');
@@ -685,7 +686,8 @@
         pulse_rate: formData.get('pulse')
       };
 
-      fetch('http://localhost:5000/api/diagnosis', {
+      fetch('https://patient-data-management.onrender.com/api/diagnosis', {
+
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -706,7 +708,7 @@
     });
 
     function viewReport(patientId, patientName) {
-      fetch(`http://localhost:5000/api/diagnosis/patient/${patientId}`)
+      fetch(`https://patient-data-management.onrender.com/api/diagnosis/patient/${patientId}`)
         .then(res => res.json())
         .then(data => {
           if (!Array.isArray(data) || data.length === 0) {
@@ -777,7 +779,8 @@
         return;
       }
 
-      fetch(`http://localhost:5000/api/diagnosis/filter-by-date?date=${date}`)
+      fetch(`https://patient-data-management.onrender.com/api/diagnosis/filter-by-date?date=${date}`)
+
         .then(res => res.json())
         .then(data => {
           tbody.innerHTML = '';
