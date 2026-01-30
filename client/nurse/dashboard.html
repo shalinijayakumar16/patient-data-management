@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nurse Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
+      color: #2c3e50;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 1.5rem 2rem;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .header-icon {
+      width: 48px;
+      height: 48px;
+      background: white;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: white;
+      letter-spacing: -0.5px;
+    }
+
+    .logout-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid white;
+      color: white;
+      padding: 0.65rem 1.25rem;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .logout-btn:hover {
+      background: white;
+      color: #667eea;
+      transform: translateY(-2px);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .section {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+
+    .section-header {
+      padding: 1.75rem 2rem;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border-bottom: 2px solid #dee2e6;
+    }
+
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #1a202c;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.3px;
+    }
+
+    .section-subtitle {
+      font-size: 0.875rem;
+      color: #64748b;
+    }
+
+    .section-content {
+      padding: 2rem;
+    }
+
+    .filters {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+
+    .filter-input {
+      flex: 1;
+      min-width: 200px;
+      padding: 0.85rem 1rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      background: #f9fafb;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+
+    .filter-input:focus {
+      outline: none;
+      border-color: #667eea;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    .table th {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      padding: 1.25rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: #495057;
+      letter-spacing: 0.3px;
+      border-bottom: 2px solid #dee2e6;
+    }
+
+    .table th:first-child {
+      border-radius: 0;
+    }
+
+    .table th:last-child {
+      border-radius: 0;
+    }
+
+    .table td {
+      padding: 1.25rem 1rem;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.875rem;
+    }
+
+    .table tbody tr {
+      transition: all 0.2s ease;
+    }
+
+    .table tbody tr:hover {
+      background: #f8f9fa;
+      transform: scale(1.001);
+    }
+
+    .table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .btn {
+      padding: 0.5rem 0.875rem;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      margin-right: 0.5rem;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+      color: white;
+      box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
+    }
+
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 650px;
+      margin: 3% auto;
+      max-height: 85vh;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modal-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 1.75rem 2rem;
+      flex-shrink: 0;
+    }
+
+    .modal-title {
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: white;
+      letter-spacing: -0.3px;
+    }
+
+    .modal-body {
+      padding: 2rem;
+      overflow-y: auto;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 0.6rem;
+      letter-spacing: 0.3px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      background: #f9fafb;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #667eea;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-row {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .form-row .form-input {
+      flex: 1;
+    }
+
+    .form-select {
+      width: 120px;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23495057' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 2px solid #f1f5f9;
+      flex-shrink: 0;
+      position: sticky;
+      bottom: 0;
+      background: white;
+    }
+
+    .btn-group .btn {
+      padding: 0.85rem 1.5rem;
+      font-size: 0.875rem;
+      margin-right: 0;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: #6c757d;
+    }
+
+    .empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .count-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+      color: #667eea;
+      padding: 0.75rem 1.5rem;
+      border-radius: 12px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      border: 2px solid rgba(102, 126, 234, 0.3);
+    }
+
+    .vitals-display {
+      font-size: 0.8125rem;
+      line-height: 1.6;
+      color: #4a5568;
+      background: #f8f9fa;
+      padding: 0.75rem;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+
+      .header-content {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .header-left {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .filters {
+        flex-direction: column;
+      }
+
+      .filter-input {
+        min-width: unset;
+      }
+      
+      .table {
+        font-size: 0.75rem;
+      }
+      
+      .table th,
+      .table td {
+        padding: 0.75rem 0.5rem;
+      }
+      
+      .modal-content {
+        width: 95%;
+        margin: 5% auto;
+      }
+
+      .form-row {
+        flex-direction: column;
+      }
+
+      .form-select {
+        width: 100%;
+      }
+
+      .btn {
+        font-size: 0.7rem;
+        padding: 0.4rem 0.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <div class="header-left">
+        <div class="header-icon">👩‍⚕️</div>
+        <h1>Nurse Dashboard</h1>
+      </div>
+      <button class="logout-btn" onclick="logout()">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Patient Search Section -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Patient Search</div>
+        <div class="section-subtitle">Find patients by ID, name, or date of birth</div>
+      </div>
+      <div class="section-content">
+        <div class="filters">
+          <input type="text" class="filter-input" id="idFilter" placeholder="🔍 Patient ID" oninput="fetchAndDisplayPatients()" />
+          <input type="text" class="filter-input" id="nameFilter" placeholder="🔍 Patient Name" oninput="fetchAndDisplayPatients()" />
+          <input type="date" class="filter-input" id="dobFilter" onchange="fetchAndDisplayPatients()" />
+        </div>
+
+        <table class="table" id="patientTable">
+          <thead>
+            <tr>
+              <th>Patient ID</th>
+              <th>Name</th>
+              <th>Date of Birth</th>
+              <th>Age</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Daily Diagnosis Section -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Daily Diagnosis Report</div>
+        <div class="section-subtitle">View patients diagnosed on a specific date</div>
+      </div>
+      <div class="section-content">
+        <div class="filters">
+          <input type="date" class="filter-input" id="diagnosisDateFilter" onchange="filterByDate()" />
+        </div>
+        
+        <div id="datePatientCount"></div>
+        
+        <table class="table" id="dateFilteredTable">
+          <thead>
+            <tr>
+              <th>Diagnosis ID</th>
+              <th>Patient Name</th>
+              <th>Age</th>
+              <th>Diagnosis Date</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Vitals Modal -->
+  <div id="vitalsModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Record Patient Vitals</div>
+      </div>
+      <div class="modal-body">
+        <form id="vitalsForm">
+          <input type="hidden" id="popupPatientId" />
+
+          <div class="form-group">
+            <label class="form-label">Temperature</label>
+            <div class="form-row">
+              <input type="number" class="form-input" step="0.1" name="temperature" placeholder="Enter temperature" required />
+              <select class="form-input form-select" name="temperature_unit" required>
+                <option value="C" selected>°C</option>
+                <option value="F">°F</option>
+                <option value="K">K</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Height</label>
+            <div class="form-row">
+              <input type="number" class="form-input" step="0.1" name="height" placeholder="Enter height" required />
+              <select class="form-input form-select" name="height_unit" required>
+                <option value="cm" selected>cm</option>
+                <option value="m">m</option>
+                <option value="inches">inches</option>
+                <option value="feet">feet</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Weight</label>
+            <div class="form-row">
+              <input type="number" class="form-input" step="0.1" name="weight" placeholder="Enter weight" required />
+              <select class="form-input form-select" name="weight_unit" required>
+                <option value="kg" selected>kg</option>
+                <option value="lbs">lbs</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Blood Oxygen (SpO₂)</label>
+            <input type="number" class="form-input" name="spo2" required min="0" max="100" placeholder="Enter SpO₂ percentage" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Blood Pressure</label>
+            <input type="text" class="form-input" name="bp" placeholder="120/80" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Pulse Rate</label>
+            <input type="number" class="form-input" name="pulse" required placeholder="Enter pulse rate (bpm)" />
+          </div>
+
+          <div class="btn-group">
+            <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save Vitals</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Diagnosis Report Modal -->
+  <div id="reportModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Patient History - <span id="reportPatientName"></span></div>
+      </div>
+      <div class="modal-body">
+        <div id="reportTableContainer"></div>
+        <div class="btn-group">
+          <button class="btn btn-secondary" onclick="closeReport()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function logout() {
+      if (confirm('Are you sure you want to sign out?')) {
+        window.location.href = "../index.html";
+      }
+    }
+
+    function fetchAndDisplayPatients() {
+      const id = document.getElementById('idFilter').value;
+      const name = document.getElementById('nameFilter').value;
+      const dob = document.getElementById('dobFilter').value;
+
+      fetch(`http://localhost:5000/api/patients/filter?id=${id}&name=${name}&dob=${dob}`)
+        .then(res => res.json())
+        .then(data => {
+          const tbody = document.querySelector('#patientTable tbody');
+          tbody.innerHTML = '';
+          
+          if (!data.length) {
+            tbody.innerHTML = `
+              <tr>
+                <td colspan="5">
+                  <div class="empty-state">
+                    <div class="empty-state-icon">🔍</div>
+                    <p>No patients found matching your search criteria</p>
+                  </div>
+                </td>
+              </tr>
+            `;
+            return;
+          }
+
+          data.forEach(patient => {
+            const dob = new Date(patient.dob).toISOString().split('T')[0];
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td><strong>#${patient.id}</strong></td>
+              <td>${patient.name}</td>
+              <td>${dob}</td>
+              <td>${patient.age}</td>
+              <td>
+                <button class="btn btn-primary" onclick="openModal('${patient.id}')">Add Vitals</button>
+                <button class="btn btn-secondary" onclick="viewReport('${patient.id}', '${patient.name}')">View History</button>
+              </td>
+            `;
+            tbody.appendChild(row);
+          });
+        })
+        .catch(err => {
+          console.error('Error fetching patients:', err);
+          const tbody = document.querySelector('#patientTable tbody');
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="5">
+                <div class="empty-state">
+                  <div class="empty-state-icon">⚠️</div>
+                  <p>Error loading patients</p>
+                </div>
+              </td>
+            </tr>
+          `;
+        });
+    }
+
+    function openModal(patientId) {
+      document.getElementById('popupPatientId').value = patientId;
+      document.getElementById('vitalsModal').style.display = 'block';
+    }
+
+    function closeModal() {
+      document.getElementById('vitalsModal').style.display = 'none';
+      document.getElementById('vitalsForm').reset();
+    }
+
+    document.getElementById('vitalsForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      const patient_id = document.getElementById('popupPatientId').value;
+      const [systolic, diastolic] = formData.get('bp').split('/');
+
+      const data = {
+        patient_id,
+        temperature_value: formData.get('temperature'),
+        temperature_unit: formData.get('temperature_unit'),
+        height_value: formData.get('height'),
+        height_unit: formData.get('height_unit'),
+        weight_value: formData.get('weight'),
+        weight_unit: formData.get('weight_unit'),
+        spo2_percentage: formData.get('spo2'),
+        systolic_pressure: systolic,
+        diastolic_pressure: diastolic,
+        pulse_rate: formData.get('pulse')
+      };
+
+      fetch('http://localhost:5000/api/diagnosis', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(res => {
+        if (res.ok) {
+          alert('✅ Vitals recorded successfully');
+          closeModal();
+          fetchAndDisplayPatients();
+        } else {
+          alert('❌ Failed to record vitals');
+        }
+      })
+      .catch(err => {
+        console.error('Error submitting vitals:', err);
+        alert('❌ Error recording vitals');
+      });
+    });
+
+    function viewReport(patientId, patientName) {
+      fetch(`http://localhost:5000/api/diagnosis/patient/${patientId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (!Array.isArray(data) || data.length === 0) {
+            alert("No medical history found for this patient");
+            return;
+          }
+          
+          document.getElementById('reportPatientName').innerText = patientName;
+
+          let html = `
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Vital Signs</th>
+                  <th>Prescription</th>
+                  <th>Doctor Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+          `;
+
+          data.forEach(entry => {
+            const date = new Date(entry.diagnosis_date).toLocaleDateString();
+            const vitals = `
+              <div class="vitals-display">
+                <strong>Temp:</strong> ${entry.temperature_value}${entry.temperature_unit}<br>
+                <strong>Height:</strong> ${entry.height_value}${entry.height_unit}<br>
+                <strong>Weight:</strong> ${entry.weight_value}${entry.weight_unit}<br>
+                <strong>SpO₂:</strong> ${entry.spo2_percentage}%<br>
+                <strong>BP:</strong> ${entry.systolic_pressure}/${entry.diastolic_pressure}<br>
+                <strong>Pulse:</strong> ${entry.pulse_rate} bpm
+              </div>
+            `;
+            html += `
+              <tr>
+                <td><strong>${date}</strong></td>
+                <td>${vitals}</td>
+                <td>${entry.prescription || '<span style="color: #9ca3af;">Not prescribed</span>'}</td>
+                <td>${entry.doctor_notes || '<span style="color: #9ca3af;">No notes</span>'}</td>
+              </tr>
+            `;
+          });
+
+          html += '</tbody></table>';
+          document.getElementById('reportTableContainer').innerHTML = html;
+          document.getElementById('reportModal').style.display = 'block';
+        })
+        .catch(err => {
+          console.error('Error fetching report:', err);
+          alert('❌ Error loading patient history');
+        });
+    }
+
+    function closeReport() {
+      document.getElementById('reportModal').style.display = 'none';
+      document.getElementById('reportTableContainer').innerHTML = '';
+    }
+
+    function filterByDate() {
+      const date = document.getElementById('diagnosisDateFilter').value;
+      const tbody = document.querySelector('#dateFilteredTable tbody');
+      const countElement = document.getElementById('datePatientCount');
+      
+      if (!date) {
+        tbody.innerHTML = '';
+        countElement.innerHTML = '';
+        return;
+      }
+
+      fetch(`http://localhost:5000/api/diagnosis/filter-by-date?date=${date}`)
+        .then(res => res.json())
+        .then(data => {
+          tbody.innerHTML = '';
+          countElement.innerHTML = '';
+
+          if (!Array.isArray(data) || data.length === 0) {
+            tbody.innerHTML = `
+              <tr>
+                <td colspan="4">
+                  <div class="empty-state">
+                    <div class="empty-state-icon">📅</div>
+                    <p>No patients diagnosed on this date</p>
+                  </div>
+                </td>
+              </tr>
+            `;
+            return;
+          }
+
+          countElement.innerHTML = `<div class="count-badge">📊 ${data.length} patients diagnosed on ${new Date(date).toLocaleDateString()}</div>`;
+
+          data.forEach(entry => {
+            const formattedDate = new Date(entry.diagnosis_date).toLocaleDateString();
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td><strong>#${entry.diagnosis_id}</strong></td>
+              <td>${entry.name}</td>
+              <td>${entry.age}</td>
+              <td>${formattedDate}</td>
+            `;
+            tbody.appendChild(row);
+          });
+        })
+        .catch(err => {
+          console.error('Error filtering by date:', err);
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="4">
+                <div class="empty-state">
+                  <div class="empty-state-icon">⚠️</div>
+                  <p>Error loading diagnosis data</p>
+                </div>
+              </td>
+            </tr>
+          `;
+        });
+    }
+
+    // Close modals when clicking outside
+    window.onclick = function(event) {
+      const vitalsModal = document.getElementById('vitalsModal');
+      const reportModal = document.getElementById('reportModal');
+      if (event.target === vitalsModal) {
+        closeModal();
+      } else if (event.target === reportModal) {
+        closeReport();
+      }
+    }
+
+    // Initialize the page
+    window.onload = fetchAndDisplayPatients;
+  </script>
+</body>
+</html>

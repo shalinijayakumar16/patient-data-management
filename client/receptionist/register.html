@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Patient Registration</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+      color: #333;
+      line-height: 1.6;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      animation: pulse 8s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.1); opacity: 0.3; }
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 0;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+      animation: slideUp 0.6s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 40px;
+      text-align: center;
+      color: white;
+      position: relative;
+    }
+
+    .header-icon {
+      width: 80px;
+      height: 80px;
+      background: white;
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    .header-icon::before {
+      content: '📋';
+      font-size: 40px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -0.5px;
+    }
+
+    .form-container {
+      padding: 40px;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #495057;
+      letter-spacing: 0.3px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 15px;
+      background: #f9fafb;
+      font-family: inherit;
+      transition: all 0.3s ease;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #667eea;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23495057' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 40px;
+    }
+
+    button {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      letter-spacing: 0.5px;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+      margin-top: 10px;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(102, 126, 234, 0.5);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .readonly {
+      background: #e9ecef;
+      color: #6c757d;
+      cursor: not-allowed;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .success-message {
+      display: none;
+      background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+      color: white;
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-weight: 600;
+      animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .error-message {
+      display: none;
+      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+      color: white;
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-weight: 600;
+      animation: slideDown 0.3s ease;
+    }
+
+    .required-indicator {
+      color: #e74c3c;
+      margin-left: 4px;
+    }
+
+    .form-footer {
+      text-align: center;
+      padding: 20px 40px 40px;
+      color: #6c757d;
+      font-size: 13px;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 20px 10px;
+      }
+
+      .container {
+        border-radius: 16px;
+      }
+
+      .header {
+        padding: 30px 20px;
+      }
+
+      .header-icon {
+        width: 70px;
+        height: 70px;
+      }
+
+      .header-icon::before {
+        font-size: 35px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .form-container {
+        padding: 30px 20px;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      input, textarea, select {
+        padding: 12px 14px;
+        font-size: 14px;
+      }
+
+      button {
+        padding: 14px;
+        font-size: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-icon"></div>
+      <h1>Patient Registration</h1>
+    </div>
+
+    <div class="form-container">
+      <div class="success-message" id="successMessage">
+        ✓ Patient registered successfully!
+      </div>
+      <div class="error-message" id="errorMessage">
+        ✗ Registration failed. Please try again.
+      </div>
+
+      <form id="patientForm">
+        <div class="form-group">
+          <label for="name">Full Name<span class="required-indicator">*</span></label>
+          <input type="text" id="name" name="name" placeholder="Enter patient's full name" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="dob">Date of Birth<span class="required-indicator">*</span></label>
+            <input type="date" id="dob" name="dob" required onchange="calculateAge()">
+          </div>
+
+          <div class="form-group">
+            <label for="age">Age</label>
+            <input type="number" id="age" name="age" class="readonly" placeholder="Auto-calculated" readonly>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="gender">Gender<span class="required-indicator">*</span></label>
+          <select id="gender" name="gender" required>
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="address">Address<span class="required-indicator">*</span></label>
+          <textarea id="address" name="address" placeholder="Enter complete address" required></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="phone_number">Phone Number<span class="required-indicator">*</span></label>
+            <input type="tel" id="phone_number" name="phone_number" pattern="[0-9]{10}" placeholder="10-digit number" required>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email<span class="required-indicator">*</span></label>
+            <input type="email" id="email" name="email" placeholder="email@example.com" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="purpose_of_visit">Purpose of Visit<span class="required-indicator">*</span></label>
+          <input type="text" id="purpose_of_visit" name="purpose_of_visit" placeholder="e.g., General checkup, Fever, Follow-up" required>
+        </div>
+
+        <button type="submit">Register Patient</button>
+      </form>
+    </div>
+
+    <div class="form-footer">
+      All fields marked with <span class="required-indicator">*</span> are required
+    </div>
+  </div>
+
+  <script>
+  function calculateAge() {
+    const dobInput = document.getElementById('dob').value;
+    const ageInput = document.getElementById('age');
+    if (dobInput) {
+      const dob = new Date(dobInput);
+      const today = new Date();
+      let age = today.getFullYear() - dob.getFullYear();
+      const m = today.getMonth() - dob.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+        age--;
+      }
+      ageInput.value = age;
+    } else {
+      ageInput.value = '';
+    }
+  }
+
+  document.getElementById('patientForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const formData = {
+      name: document.getElementById('name').value,
+      dob: document.getElementById('dob').value,
+      age: document.getElementById('age').value,
+      address: document.getElementById('address').value,
+      phone_number: document.getElementById('phone_number').value,
+      email: document.getElementById('email').value,
+      gender: document.getElementById('gender').value,
+      purpose_of_visit: document.getElementById('purpose_of_visit').value
+    };
+
+    // Hide any previous messages
+    document.getElementById('successMessage').style.display = 'none';
+    document.getElementById('errorMessage').style.display = 'none';
+
+    // Send to backend
+    fetch('http://localhost:5000/api/patients', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData)
+    })
+    .then(res => {
+      if (!res.ok) throw new Error("Registration failed");
+      return res.json();
+    })
+    .then(data => {
+      // Show success message
+      document.getElementById('successMessage').style.display = 'block';
+      
+      // Scroll to top to see message
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      // Redirect after 1.5 seconds
+      setTimeout(() => {
+        window.location.href = "dashboard.html";
+      }, 1500);
+    })
+    .catch(err => {
+      console.error(err);
+      
+      // Show error message
+      const errorMsg = document.getElementById('errorMessage');
+      errorMsg.textContent = '✗ Error: Could not register patient. Please check all fields and try again.';
+      errorMsg.style.display = 'block';
+      
+      // Scroll to top to see message
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+</script>
+</body>
+</html>

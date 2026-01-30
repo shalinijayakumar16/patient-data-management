@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sunshine Hospital</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #333;
+      position: relative;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: drift 20s linear infinite;
+      opacity: 0.3;
+    }
+
+    @keyframes drift {
+      from { transform: translate(0, 0); }
+      to { transform: translate(50px, 50px); }
+    }
+
+    .container {
+      text-align: center;
+      max-width: 600px;
+      padding: 60px 40px;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 25px 70px rgba(0,0,0,0.3);
+      position: relative;
+      z-index: 1;
+      animation: fadeIn 0.8s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .logo-wrapper {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 30px;
+    }
+
+    .logo {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 50px;
+      margin: 0 auto;
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+      }
+      50% {
+        transform: scale(1.05);
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+      }
+    }
+
+    .logo::before {
+      content: '+';
+      color: white;
+      font-weight: 300;
+      font-size: 60px;
+    }
+
+    h1 {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #1a1a1a;
+      letter-spacing: -0.5px;
+    }
+
+    .tagline {
+      font-size: 18px;
+      color: #666;
+      margin-bottom: 40px;
+      font-weight: 400;
+      letter-spacing: 0.3px;
+    }
+
+    .features {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+
+    .feature {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .feature-text {
+      font-size: 13px;
+      color: #555;
+      font-weight: 500;
+    }
+
+    button {
+      padding: 16px 48px;
+      font-size: 16px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    button:hover::before {
+      left: 100%;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(102, 126, 234, 0.5);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .footer-text {
+      margin-top: 30px;
+      font-size: 13px;
+      color: #888;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 40px 30px;
+        margin: 20px;
+        border-radius: 20px;
+      }
+
+      .logo {
+        width: 80px;
+        height: 80px;
+        font-size: 40px;
+      }
+
+      .logo::before {
+        font-size: 48px;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+      
+      .tagline {
+        font-size: 16px;
+      }
+
+      .features {
+        gap: 20px;
+      }
+
+      .feature-icon {
+        width: 42px;
+        height: 42px;
+        font-size: 20px;
+      }
+
+      .feature-text {
+        font-size: 12px;
+      }
+      
+      button {
+        padding: 14px 40px;
+        font-size: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo-wrapper">
+      <div class="logo"></div>
+    </div>
+    <h1>Sunshine Hospital</h1>
+    <div class="tagline">Your Health, Our Priority</div>
+    
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon">💊</div>
+        <div class="feature-text">Expert Care</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-text">24/7 Service</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔒</div>
+        <div class="feature-text">Secure Portal</div>
+      </div>
+    </div>
+
+    <button onclick="redirectToLogin()">Get Started</button>
+    
+    <div class="footer-text">Staff Portal Access</div>
+  </div>
+
+  <script>
+    function redirectToLogin() {
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>

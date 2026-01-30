@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Receptionist Dashboard</title>
+  <style>
+    * { 
+      box-sizing: border-box; 
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
+      color: #2c3e50;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 1.5rem 2rem;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+      margin-bottom: 2rem;
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .header-icon {
+      width: 48px;
+      height: 48px;
+      background: white;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: white;
+      letter-spacing: -0.5px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem 2rem;
+    }
+
+    .filters {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      margin-bottom: 1.5rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filters input {
+      padding: 0.85rem 1rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      width: 200px;
+      transition: all 0.3s ease;
+      background: #f9fafb;
+      font-family: inherit;
+    }
+
+    .filters input:focus {
+      outline: none;
+      border-color: #667eea;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    .filters button {
+      padding: 0.85rem 1.5rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      letter-spacing: 0.3px;
+    }
+
+    .filters button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .table-container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      padding: 1.25rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: #495057;
+      border-bottom: 2px solid #dee2e6;
+      letter-spacing: 0.3px;
+    }
+
+    td {
+      padding: 1.25rem 1rem;
+      border-bottom: 1px solid #f1f3f4;
+      font-size: 0.875rem;
+    }
+
+    tr:hover {
+      background: #f8f9fa;
+    }
+
+    .actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .actions button {
+      padding: 0.5rem 0.875rem;
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      letter-spacing: 0.3px;
+    }
+
+    .edit-btn { 
+      background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+      color: white;
+      box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+    }
+
+    .edit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+    }
+
+    .delete-btn { 
+      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+      color: white;
+      box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+    }
+
+    .delete-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+    }
+
+    .visit-btn { 
+      background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+      color: white;
+      box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
+    }
+
+    .visit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
+    }
+
+    .history-btn {
+      background: linear-gradient(135deg, #8e44ad 0%, #7d3c98 100%);
+      color: white;
+      box-shadow: 0 2px 8px rgba(142, 68, 173, 0.3);
+    }
+
+    .history-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(142, 68, 173, 0.4);
+    }
+
+    #editModal, #visitModal, #historyModal, #registerModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-content {
+      background: white;
+      padding: 0;
+      max-width: 550px;
+      margin: 3% auto;
+      border-radius: 20px;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modal-content h2 {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 1.75rem;
+      margin: 0;
+      border-radius: 20px 20px 0 0;
+      font-size: 1.35rem;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+    }
+
+    .modal-body {
+      padding: 2rem;
+    }
+
+    .modal-content label {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-weight: 600;
+      color: #495057;
+      font-size: 0.875rem;
+      letter-spacing: 0.3px;
+    }
+
+    .modal-content input,
+    .modal-content textarea,
+    .modal-content select {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      margin-bottom: 1.25rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      background: #f9fafb;
+      font-family: inherit;
+      transition: all 0.3s ease;
+    }
+
+    .modal-content input:focus,
+    .modal-content textarea:focus,
+    .modal-content select:focus {
+      outline: none;
+      border-color: #667eea;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    .modal-content input[readonly],
+    .modal-content textarea[readonly] {
+      background: #e9ecef;
+      color: #6c757d;
+      cursor: not-allowed;
+    }
+
+    .modal-footer {
+      padding: 1.25rem 2rem 2rem;
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+    }
+
+    .modal-content button {
+      padding: 0.85rem 1.5rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      letter-spacing: 0.3px;
+    }
+
+    .save-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .save-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .cancel-btn {
+      background: #6c757d;
+      color: white;
+    }
+
+    .cancel-btn:hover {
+      background: #5a6268;
+      transform: translateY(-2px);
+    }
+
+    #historyModal table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    #historyModal th {
+      background: #f8f9fa;
+      padding: 1rem;
+      border: 1px solid #dee2e6;
+      font-size: 0.875rem;
+    }
+
+    #historyModal td {
+      padding: 1rem;
+      border: 1px solid #dee2e6;
+      font-size: 0.875rem;
+    }
+
+    .patient-info {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+      padding: 1.25rem;
+      border-radius: 12px;
+      margin-bottom: 1.25rem;
+      font-size: 0.875rem;
+      border-left: 4px solid #667eea;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: #6c757d;
+    }
+
+    .empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 1rem 1rem;
+      }
+
+      .header-content {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .filters {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .filters input,
+      .filters button {
+        width: 100%;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      table {
+        font-size: 0.75rem;
+      }
+
+      th, td {
+        padding: 0.75rem 0.5rem;
+      }
+
+      .modal-content {
+        margin: 5% 1rem;
+        max-width: calc(100% - 2rem);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-content">
+      <div class="header-left">
+        <div class="header-icon">👨‍⚕️</div>
+        <h1>Receptionist Patient Dashboard</h1>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="filters">
+      <input type="text" id="filterId" placeholder="🔍 Search by ID" oninput="filterPatients()" />
+      <input type="text" id="filterName" placeholder="🔍 Search by Name" oninput="filterPatients()" />
+      <input type="date" id="filterDOB" onchange="filterPatients()" />
+      <button onclick="openRegisterModal()">+ Register New Patient</button>
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>DOB</th>
+            <th>Address</th>
+            <th>Gender</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="patientTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Register Modal -->
+  <div id="registerModal">
+    <div class="modal-content">
+      <h2>Register New Patient</h2>
+      <div class="modal-body">
+        <label>Full Name:</label>
+        <input type="text" id="regName" placeholder="Enter patient name" />
+        
+        <label>Date of Birth:</label>
+        <input type="date" id="regDOB" onchange="calculateRegAge()" />
+        
+        <label>Age:</label>
+        <input type="number" id="regAge" readonly placeholder="Auto-calculated" />
+        
+        <label>Gender:</label>
+        <select id="regGender">
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+        
+        <label>Address:</label>
+        <textarea id="regAddress" rows="3" placeholder="Enter address"></textarea>
+        
+        <label>Email:</label>
+        <input type="email" id="regEmail" placeholder="email@example.com" />
+      </div>
+      <div class="modal-footer">
+        <button class="cancel-btn" onclick="closeRegisterModal()">Cancel</button>
+        <button class="save-btn" onclick="submitNewPatient()">Register Patient</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div id="editModal">
+    <div class="modal-content">
+      <h2>Edit Patient</h2>
+      <div class="modal-body">
+        <input type="hidden" id="editId" />
+        
+        <label>Full Name:</label>
+        <input type="text" id="editName" />
+        
+        <label>Date of Birth:</label>
+        <input type="date" id="editDOB" onchange="calculateAge()" />
+        
+        <label>Age:</label>
+        <input type="number" id="editAge" readonly />
+        
+        <label>Gender:</label>
+        <select id="editGender">
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+        
+        <label>Address:</label>
+        <textarea id="editAddress" rows="3"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+        <button class="save-btn" onclick="saveEdits()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Visit Modal -->
+  <div id="visitModal">
+    <div class="modal-content">
+      <h2>Add Visit</h2>
+      <div class="modal-body">
+        <input type="hidden" id="visitPatientId" />
+        
+        <label>Patient ID:</label>
+        <input type="text" id="visitId" readonly />
+        
+        <label>Patient Name:</label>
+        <input type="text" id="visitName" readonly />
+        
+        <label>Date of Birth:</label>
+        <input type="date" id="visitDOB" readonly />
+        
+        <label>Gender:</label>
+        <input type="text" id="visitGender" readonly />
+        
+        <label>Address:</label>
+        <textarea id="visitAddress" rows="2" readonly></textarea>
+        
+        <label>Purpose of Visit:</label>
+        <input type="text" id="visitPurpose" placeholder="Enter purpose of visit" />
+      </div>
+      <div class="modal-footer">
+        <button class="cancel-btn" onclick="closeVisitModal()">Cancel</button>
+        <button class="save-btn" onclick="submitVisit()">Record Visit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- History Modal -->
+  <div id="historyModal">
+    <div class="modal-content">
+      <h2>Visit History</h2>
+      <div class="modal-body">
+        <div id="visitHistoryContent"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="cancel-btn" onclick="closeHistoryModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let allPatients = [];
+
+    window.onload = () => {
+      fetch('http://localhost:5000/api/patients')
+        .then(res => res.json())
+        .then(data => {
+          allPatients = data;
+          displayPatients(data);
+        })
+        .catch(err => {
+          console.error('Error loading patients:', err);
+        });
+    };
+
+    function displayPatients(patients) {
+      const tableBody = document.getElementById('patientTableBody');
+      if (patients.length === 0) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="7">
+              <div class="empty-state">
+                <div class="empty-state-icon">📋</div>
+                <p>No patients found</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+      
+      tableBody.innerHTML = '';
+      patients.forEach(patient => {
+        const dobOnly = patient.dob.split('T')[0];
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><strong>#${patient.id}</strong></td>
+          <td>${patient.name}</td>
+          <td>${patient.age}</td>
+          <td>${dobOnly}</td>
+          <td>${patient.address}</td>
+          <td>${patient.gender}</td>
+          <td class="actions">
+            <button class="edit-btn" onclick="openEditModal(${patient.id})">Edit</button>
+            <button class="delete-btn" onclick="deletePatient(${patient.id})">Delete</button>
+            <button class="visit-btn" onclick="addVisit(${patient.id})">Add Visit</button>
+            <button class="history-btn" onclick="viewVisitHistory(${patient.id})">📄 History</button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    function openRegisterModal() {
+      document.getElementById('regName').value = '';
+      document.getElementById('regDOB').value = '';
+      document.getElementById('regAge').value = '';
+      document.getElementById('regAddress').value = '';
+      document.getElementById('regGender').value = 'Male';
+      document.getElementById('regEmail').value = '';
+      document.getElementById('registerModal').style.display = 'block';
+    }
+
+    function closeRegisterModal() {
+      document.getElementById('registerModal').style.display = 'none';
+    }
+
+    function calculateRegAge() {
+      const dobInput = document.getElementById('regDOB').value;
+      const ageInput = document.getElementById('regAge');
+      if (dobInput) {
+        const dob = new Date(dobInput);
+        const today = new Date();
+        let age = today.getFullYear() - dob.getFullYear();
+        const m = today.getMonth() - dob.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+        ageInput.value = age;
+      } else {
+        ageInput.value = '';
+      }
+    }
+
+    function submitNewPatient() {
+      const name = document.getElementById('regName').value.trim();
+      const dob = document.getElementById('regDOB').value;
+      const age = document.getElementById('regAge').value;
+      const address = document.getElementById('regAddress').value.trim();
+      const gender = document.getElementById('regGender').value;
+      const email = document.getElementById('regEmail').value.trim();
+
+      if (!name || !dob || !address || !gender || !email) {
+        alert('Please fill in all fields.');
+        return;
+      }
+
+      fetch('http://localhost:5000/api/patients', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          dob,
+          address,
+          gender,
+          email,
+          phone_number: '',
+        })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.patient_id) {
+            alert('✅ Patient added successfully!');
+            closeRegisterModal();
+            window.location.reload();
+          } else {
+            alert('❌ Error: ' + (data.error || 'Unknown error'));
+          }
+        })
+        .catch(err => alert('❌ Something went wrong: ' + err));
+    }
+
+    function viewVisitHistory(patientId) {
+      fetch(`http://localhost:5000/api/visits/${patientId}`)
+        .then(res => {
+          if (!res.ok) throw new Error("No visits found.");
+          return res.json();
+        })
+        .then(data => {
+          const container = document.getElementById('visitHistoryContent');
+          container.innerHTML = '';
+          if (data.length === 0) {
+            container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><p>No visit history available.</p></div>';
+          } else {
+            const dobOnly = data[0].dob.split('T')[0];
+            const patientInfo = `
+              <div class="patient-info">
+                <strong>Patient:</strong> ${data[0].name} &nbsp;|&nbsp; 
+                <strong>Age:</strong> ${data[0].age} &nbsp;|&nbsp; 
+                <strong>DOB:</strong> ${dobOnly}
+              </div>
+            `;
+            const table = document.createElement('table');
+            table.innerHTML = `
+              <thead>
+                <tr>
+                  <th>Purpose of Visit</th>
+                  <th>Date & Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${data.map(v => `
+                  <tr>
+                    <td>${v.purpose_of_visit}</td>
+                    <td>${new Date(v.visit_datetime).toLocaleString()}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            `;
+            container.innerHTML = patientInfo;
+            container.appendChild(table);
+          }
+          document.getElementById('historyModal').style.display = 'block';
+        })
+        .catch(() => {
+          document.getElementById('visitHistoryContent').innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><p>No visit history available.</p></div>';
+          document.getElementById('historyModal').style.display = 'block';
+        });
+    }
+
+    function closeHistoryModal() {
+      document.getElementById('historyModal').style.display = 'none';
+    }
+
+    function filterPatients() {
+      const id = document.getElementById('filterId').value.toLowerCase();
+      const name = document.getElementById('filterName').value.toLowerCase();
+      const dob = document.getElementById('filterDOB').value;
+      const filtered = allPatients.filter(p =>
+        p.id.toString().includes(id) &&
+        p.name.toLowerCase().includes(name) &&
+        (dob ? p.dob.split('T')[0] === dob : true)
+      );
+      displayPatients(filtered);
+    }
+
+    function openEditModal(id) {
+      fetch(`http://localhost:5000/api/patients/${id}`)
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('editId').value = data.id;
+          document.getElementById('editName').value = data.name;
+          document.getElementById('editDOB').value = data.dob.split('T')[0];
+          document.getElementById('editGender').value = data.gender;
+          document.getElementById('editAddress').value = data.address;
+          calculateAge();
+          document.getElementById('editModal').style.display = 'block';
+        })
+        .catch(err => {
+          console.error('Error loading patient:', err);
+          alert('Failed to load patient information');
+        });
+    }
+
+    function closeModal() {
+      document.getElementById('editModal').style.display = 'none';
+    }
+
+    function saveEdits() {
+      const id = document.getElementById('editId').value;
+      const updatedData = {
+        name: document.getElementById('editName').value,
+        age: document.getElementById('editAge').value,
+        dob: document.getElementById('editDOB').value,
+        gender: document.getElementById('editGender').value,
+        address: document.getElementById('editAddress').value
+      };
+      
+      fetch(`http://localhost:5000/api/patients/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedData)
+      })
+        .then(() => {
+          alert('✅ Patient updated successfully!');
+          closeModal();
+          window.location.reload();
+        })
+        .catch(err => {
+          console.error('Error updating patient:', err);
+          alert('❌ Failed to update patient');
+        });
+    }
+
+    function calculateAge() {
+      const dobInput = document.getElementById('editDOB').value;
+      const ageInput = document.getElementById('editAge');
+      if (dobInput) {
+        const dob = new Date(dobInput);
+        const today = new Date();
+        let age = today.getFullYear() - dob.getFullYear();
+        const m = today.getMonth() - dob.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+        ageInput.value = age;
+      } else {
+        ageInput.value = '';
+      }
+    }
+
+    function deletePatient(id) {
+      if (confirm('Are you sure you want to delete this patient? This action cannot be undone.')) {
+        fetch(`http://localhost:5000/api/patients/${id}`, {
+          method: 'DELETE'
+        })
+          .then(() => {
+            alert('✅ Patient deleted successfully');
+            allPatients = allPatients.filter(p => p.id !== id);
+            displayPatients(allPatients);
+          })
+          .catch(err => {
+            console.error('Error deleting patient:', err);
+            alert('❌ Failed to delete patient');
+          });
+      }
+    }
+
+    function addVisit(id) {
+      fetch(`http://localhost:5000/api/patients/${id}`)
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('visitPatientId').value = data.id;
+          document.getElementById('visitId').value = data.id;
+          document.getElementById('visitName').value = data.name;
+          document.getElementById('visitDOB').value = data.dob.split('T')[0];
+          document.getElementById('visitGender').value = data.gender;
+          document.getElementById('visitAddress').value = data.address;
+          document.getElementById('visitPurpose').value = '';
+          document.getElementById('visitModal').style.display = 'block';
+        })
+        .catch(err => {
+          console.error('Error loading patient:', err);
+          alert('Failed to load patient information');
+        });
+    }
+
+    function closeVisitModal() {
+      document.getElementById('visitModal').style.display = 'none';
+    }
+
+    function submitVisit() {
+      const patient_id = document.getElementById('visitPatientId').value;
+      const purpose = document.getElementById('visitPurpose').value.trim();
+      
+      if (!purpose) {
+        alert('Please enter a purpose of visit.');
+        return;
+      }
+      
+      fetch('http://localhost:5000/api/visits', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ patient_id, purpose_of_visit: purpose })
+      })
+        .then(() => {
+          alert('✅ Visit recorded successfully!');
+          closeVisitModal();
+        })
+        .catch(err => {
+          console.error('Error recording visit:', err);
+          alert('❌ Failed to record visit');
+        });
+    }
+
+    // Close modals when clicking outside
+    window.onclick = function(event) {
+      const modals = ['registerModal', 'editModal', 'visitModal', 'historyModal'];
+      modals.forEach(modalId => {
+        const modal = document.getElementById(modalId);
+        if (event.target === modal) {
+          modal.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>

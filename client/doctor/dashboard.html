@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Doctor Dashboard</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f8fafb;
+      color: #2d3748;
+      line-height: 1.6;
+    }
+
+    .header {
+      background: white;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #1a202c;
+    }
+
+    .logout-btn {
+      padding: 0.5rem 1rem;
+      background: #e53e3e;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .logout-btn:hover {
+      background: #c53030;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #2b6cb0;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: #718096;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .table-container {
+      background: white;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      overflow: hidden;
+    }
+
+    .table-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .table-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #1a202c;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: #f7fafc;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: #4a5568;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    td {
+      padding: 1rem;
+      border-top: 1px solid #e2e8f0;
+      vertical-align: middle;
+    }
+
+    tbody tr:hover {
+      background: #f7fafc;
+    }
+
+    .btn {
+      padding: 0.5rem 0.75rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-right: 0.5rem;
+    }
+
+    .btn-primary {
+      background: #2b6cb0;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #2c5282;
+    }
+
+    .btn-secondary {
+      background: #ed8936;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #dd6b20;
+    }
+
+    .popup {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+    }
+
+    .popup-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .popup-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .popup-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #1a202c;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #718096;
+      padding: 0.25rem;
+    }
+
+    .close-btn:hover {
+      color: #2d3748;
+    }
+
+    .popup-body {
+      padding: 1.5rem;
+    }
+
+    .patient-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      background: #f7fafc;
+      border-radius: 6px;
+    }
+
+    .info-item {
+      text-align: center;
+    }
+
+    .info-label {
+      font-size: 0.75rem;
+      color: #718096;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.25rem;
+    }
+
+    .info-value {
+      font-weight: 600;
+      color: #2d3748;
+    }
+
+    .vitals-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .vital-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .vital-label {
+      font-size: 0.75rem;
+      color: #718096;
+      margin-bottom: 0.25rem;
+    }
+
+    .vital-value {
+      font-weight: 600;
+      color: #2b6cb0;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #4a5568;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      transition: border-color 0.15s;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #2b6cb0;
+      box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.1);
+    }
+
+    .popup-footer {
+      padding: 1.5rem;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn-success {
+      background: #38a169;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #2f855a;
+    }
+
+    .btn-info {
+      background: #3182ce;
+      color: white;
+    }
+
+    .btn-info:hover {
+      background: #2c5282;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #718096;
+    }
+
+    .empty-state svg {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    #popup {
+  z-index: 1500;
+}
+
+#historyPopup {
+  z-index: 2000;
+}
+
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Doctor Dashboard</h1>
+    <button class="logout-btn" onclick="logout()">Sign Out</button>
+  </div>
+
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number" id="pending-count">0</div>
+        <div class="stat-label">Completed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="today-count">0</div>
+        <div class="stat-label">Today's Cases</div>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <div class="table-header">
+        <div class="table-title">Patient Queue</div>
+      </div>
+      <table id="patients-table">
+        <thead>
+          <tr>
+            <th>Patient ID</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Date & Time</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="popup" id="popup">
+    <div class="popup-content">
+      <div class="popup-header">
+        <div class="popup-title">Patient Diagnosis</div>
+        <button class="close-btn" onclick="closePopup()">&times;</button>
+      </div>
+      
+      <div class="popup-body">
+        <div class="patient-info">
+          <div class="info-item">
+            <div class="info-label">Patient ID</div>
+            <div class="info-value" id="popup-id">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Name</div>
+            <div class="info-value" id="popup-name">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Age</div>
+            <div class="info-value" id="popup-age">-</div>
+          </div>
+        </div>
+           <!-- HISTORY POPUP -->
+<div class="popup" id="historyPopup">
+  <div class="popup-content">
+    <div class="popup-header">
+      <div class="popup-title">Patient History</div>
+      <button class="close-btn" onclick="closeHistoryPopup()">&times;</button>
+    </div>
+
+    <div class="popup-body">
+      <h4 id="historyPatientName"></h4>
+      <div id="historyContainer">Loading history...</div>
+    </div>
+  </div>
+</div>
+
+
+        <div class="vitals-grid" id="popup-vitals"></div>
+
+        <div class="form-group">
+          <label class="form-label">Prescription</label>
+          <textarea id="popup-prescription" class="form-control" rows="4" placeholder="Enter prescription details..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Doctor Notes</label>
+          <textarea id="popup-notes" class="form-control" rows="4" placeholder="Enter clinical notes..."></textarea>
+        </div>
+      </div>
+
+      <div class="popup-footer">
+        <button class="btn btn-success" onclick="submitDiagnosis()">Submit Diagnosis</button>
+        <button class="btn btn-info" onclick="downloadPDF()">Download PDF</button>
+      </div>
+    </div>
+  </div>
+  <div class="popup" id="reportModal">
+  <div class="popup-content" style="max-width:900px">
+    <div class="popup-header">
+      <div class="popup-title" id="reportPatientName">Patient History</div>
+      <button class="close-btn" onclick="closeReport()">&times;</button>
+    </div>
+    <div class="popup-body" id="reportTableContainer"></div>
+  </div>
+</div>
+
+
+<script>
+  let currentPatient = null;
+
+  function logout() {
+    window.location.href = "../index.html";
+  }
+
+  async function fetchPatients() {
+    try {
+      // 👉 Fetch patient queue (pending)
+      const res = await fetch("http://localhost:5000/api/diagnosis/pending");
+      const patients = await res.json();
+
+      const tbody = document.querySelector("#patients-table tbody");
+      tbody.innerHTML = "";
+
+      // 👉 Fetch Pending Count from API
+      const pendingRes = await fetch("http://localhost:5000/api/diagnosis/pending-count");
+      const pendingData = await pendingRes.json();
+      document.getElementById("pending-count").textContent = pendingData.pending_count;
+
+      // 👉 Fetch Today Count from API
+      const todayRes = await fetch("http://localhost:5000/api/diagnosis/today-count");
+      const todayData = await todayRes.json();
+      document.getElementById("today-count").textContent = todayData.today_count;
+
+      if (patients.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="empty-state">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              <div>No pending cases</div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      patients.forEach(p => {
+        const row = document.createElement("tr");
+        const date = new Date(p.diagnosis_date);
+        row.innerHTML = `
+          <td>${p.patient_id}</td>
+          <td>${p.name}</td>
+          <td>${p.age}</td>
+          <td>${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</td>
+         <td>
+  <button class="btn btn-primary" onclick='openPopup(${JSON.stringify(p)})'>
+    Diagnose
+  </button>
+
+ <button class="btn btn-secondary"
+  onclick="viewReport('${p.patient_id}', '${p.name}')">
+  View History
+</button>
+
+
+
+
+  <button class="btn btn-secondary" onclick="skipDiagnosis(${p.diagnosis_id})">
+    Skip
+  </button>
+</td>
+
+
+        `;
+        tbody.appendChild(row);
+      });
+
+    } catch (err) {
+      console.error("Error fetching queue:", err);
+      alert("Failed to load patients");
+    }
+  }
+
+
+  function viewReport(patientId, patientName) {
+      fetch(`http://localhost:5000/api/diagnosis/patient/${patientId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (!Array.isArray(data)) {
+            alert("No medical history found for this patient");
+            return;
+          }
+          
+          document.getElementById('reportPatientName').innerText = patientName;
+
+          let html = `
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Vital Signs</th>
+                  <th>Prescription</th>
+                  <th>Doctor Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+          `;
+
+          data.forEach(entry => {
+            const date = new Date(entry.diagnosis_date).toLocaleDateString();
+            const vitals = `
+              <div class="vitals-display">
+                Temp: ${entry.temperature_value}${entry.temperature_unit}<br>
+                Height: ${entry.height_value}${entry.height_unit}<br>
+                Weight: ${entry.weight_value}${entry.weight_unit}<br>
+                SpO₂: ${entry.spo2_percentage}%<br>
+                BP: ${entry.systolic_pressure}/${entry.diastolic_pressure}<br>
+                Pulse: ${entry.pulse_rate} bpm
+              </div>
+            `;
+            html += `
+              <tr>
+                <td>${date}</td>
+                <td>${vitals}</td>
+                <td>${entry.prescription || '<span style="color: #9ca3af;">Not prescribed</span>'}</td>
+                <td>${entry.doctor_notes || '<span style="color: #9ca3af;">No notes</span>'}</td>
+              </tr>
+            `;
+          });
+
+          html += '</tbody></table>';
+          document.getElementById('reportTableContainer').innerHTML = html;
+          document.getElementById('reportModal').style.display = 'block';
+        })
+        .catch(err => {
+          console.error('Error fetching report:', err);
+          alert('Error loading patient history');
+        });
+    }
+
+    function closeReport() {
+      document.getElementById('reportModal').style.display = 'none';
+      document.getElementById('reportTableContainer').innerHTML = '';
+    }
+
+
+function closeReport() {
+  document.getElementById("reportModal").style.display = "none";
+  document.getElementById("reportTableContainer").innerHTML = "";
+}
+
+
+
+
+ function viewHistory(patientId, patientName) {
+  alert("viewHistory called with " + patientId);
+
+    
+  // ✅ CLOSE diagnosis popup if open
+  document.getElementById("popup").style.display = "none";
+
+  // ✅ OPEN history popup
+  document.getElementById("historyPopup").style.display = "block";
+  document.getElementById("historyPatientName").innerText =
+    "History for " + patientName;
+
+  fetch(`http://localhost:5000/api/diagnosis/patient/${patientId}`)
+    .then(res => res.json())
+    .then(data => {
+      if (!Array.isArray(data) || data.length === 0) {
+        document.getElementById("historyContainer").innerHTML =
+          "<p>No previous visits found.</p>";
+        return;
+      }
+
+      let html = `
+        <table style="width:100%; border-collapse:collapse;">
+          <tr>
+            <th>Date</th>
+            <th>Vitals</th>
+            <th>Prescription</th>
+          </tr>
+      `;
+
+      data.forEach(v => {
+        html += `
+          <tr>
+            <td>${new Date(v.diagnosis_date).toLocaleDateString()}</td>
+            <td>
+              Temp: ${v.temperature_value}${v.temperature_unit}<br>
+              BP: ${v.systolic_pressure}/${v.diastolic_pressure}<br>
+              SpO₂: ${v.spo2_percentage}%
+            </td>
+            <td>${v.prescription || "—"}</td>
+          </tr>
+        `;
+      });
+
+      html += "</table>";
+      document.getElementById("historyContainer").innerHTML = html;
+    });
+}
+
+
+function closeHistoryPopup() {
+  document.getElementById("historyPopup").style.display = "none";
+}
+
+function openPopup(patient) {
+  // ✅ CLOSE history popup if it is open
+  document.getElementById("historyPopup").style.display = "none";
+
+  currentPatient = patient;
+  document.getElementById("popup").style.display = "block";
+  document.getElementById("popup-name").textContent = patient.name;
+  document.getElementById("popup-id").textContent = patient.patient_id;
+  document.getElementById("popup-age").textContent = patient.age;
+
+  const vitalsGrid = document.getElementById("popup-vitals");
+  vitalsGrid.innerHTML = `
+    <div class="vital-card">
+      <div class="vital-label">Temperature</div>
+      <div class="vital-value">${patient.temperature_value}°${patient.temperature_unit}</div>
+    </div>
+    <div class="vital-card">
+      <div class="vital-label">Height</div>
+      <div class="vital-value">${patient.height_value} ${patient.height_unit}</div>
+    </div>
+    <div class="vital-card">
+      <div class="vital-label">Weight</div>
+      <div class="vital-value">${patient.weight_value} ${patient.weight_unit}</div>
+    </div>
+    <div class="vital-card">
+      <div class="vital-label">SpO₂</div>
+      <div class="vital-value">${patient.spo2_percentage}%</div>
+    </div>
+    <div class="vital-card">
+      <div class="vital-label">Pulse</div>
+      <div class="vital-value">${patient.pulse_rate} bpm</div>
+    </div>
+    <div class="vital-card">
+      <div class="vital-label">Blood Pressure</div>
+      <div class="vital-value">${patient.systolic_pressure}/${patient.diastolic_pressure}</div>
+    </div>
+  `;
+
+  document.getElementById("popup-prescription").value = "";
+  document.getElementById("popup-notes").value = "";
+}
+
+
+  function closePopup() {
+    document.getElementById("popup").style.display = "none";
+    currentPatient = null;
+  }
+
+  async function submitDiagnosis() {
+    if (!currentPatient) return;
+
+    const prescription = document.getElementById("popup-prescription").value.trim();
+    const doctor_notes = document.getElementById("popup-notes").value.trim();
+
+    if (!prescription || !doctor_notes) {
+      alert("Please fill both prescription and notes");
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:5000/api/doctor/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          patient_id: currentPatient.patient_id,
+          diagnosis_id: currentPatient.diagnosis_id,
+          prescription,
+          doctor_notes
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert("Error: " + data.error);
+        return;
+      }
+
+      alert("Diagnosis submitted successfully");
+      closePopup();
+      fetchPatients();
+    } catch (err) {
+      console.error("Submit failed:", err);
+      alert("Failed to submit diagnosis");
+    }
+  }
+
+  function downloadPDF() {s
+    if (!currentPatient) return;
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const today = new Date().toLocaleDateString();
+
+    doc.setFontSize(20);
+    doc.text("Medical Report", 105, 20, { align: 'center' });
+    doc.setFontSize(10);
+    doc.text(`Date: ${today}`, 20, 40);
+
+    doc.setFontSize(14);
+    doc.text("Patient Information", 20, 55);
+    doc.setFontSize(10);
+    doc.text(`ID: ${currentPatient.patient_id}`, 20, 65);
+    doc.text(`Name: ${currentPatient.name}`, 20, 72);
+    doc.text(`Age: ${currentPatient.age}`, 20, 79);
+
+    const vitalsData = [
+      ["Temperature", `${currentPatient.temperature_value}°${currentPatient.temperature_unit}`],
+      ["Height", `${currentPatient.height_value} ${currentPatient.height_unit}`],
+      ["Weight", `${currentPatient.weight_value} ${currentPatient.weight_unit}`],
+      ["SpO₂", `${currentPatient.spo2_percentage}%`],
+      ["Pulse", `${currentPatient.pulse_rate} bpm`],
+      ["Blood Pressure", `${currentPatient.systolic_pressure}/${currentPatient.diastolic_pressure} mmHg`]
+    ];
+
+    doc.autoTable({
+      startY: 90,
+      head: [["Vital Signs", "Value"]],
+      body: vitalsData,
+      theme: "grid",
+      styles: { fontSize: 9 }
+    });
+
+    let finalY = doc.lastAutoTable.finalY + 15;
+
+    doc.setFontSize(12);
+    doc.text("Prescription:", 20, finalY);
+    doc.setFontSize(10);
+    const prescription = document.getElementById("popup-prescription").value.trim();
+    const prescriptionLines = doc.splitTextToSize(prescription, 170);
+    doc.text(prescriptionLines, 20, finalY + 8);
+
+    finalY += 8 + (prescriptionLines.length * 5) + 10;
+
+    doc.setFontSize(12);
+    doc.text("Doctor Notes:", 20, finalY);
+    doc.setFontSize(10);
+    const notes = document.getElementById("popup-notes").value.trim();
+    const notesLines = doc.splitTextToSize(notes, 170);
+    doc.text(notesLines, 20, finalY + 8);
+
+    finalY += 8 + (notesLines.length * 5) + 20;
+
+    doc.text("_________________________", 120, finalY);
+    doc.text("Doctor Signature", 130, finalY + 5);
+
+    doc.save(`${currentPatient.name}_medical_report.pdf`);
+  }
+
+  async function skipDiagnosis(id) {
+    try {
+      const res = await fetch(`http://localhost:5000/api/diagnosis/skip/${id}`, {
+        method: 'PATCH'
+      });
+
+      if (res.ok) {
+        alert("Patient skipped successfully");
+        fetchPatients();
+      } else {
+        alert("Failed to skip patient");
+      }
+    } catch (err) {
+      console.error("Error skipping diagnosis:", err);
+      alert("Failed to skip patient");
+    }
+  }
+
+  // Initialize
+  fetchPatients();
+</script>
+
+</body>
+</html>

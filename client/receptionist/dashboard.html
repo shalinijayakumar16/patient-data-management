@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hospital Reception Dashboard</title>
+  <style>
+    * { 
+      box-sizing: border-box; 
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
+      color: #2c3e50;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 1.5rem 2rem;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .header-icon {
+      width: 48px;
+      height: 48px;
+      background: white;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: white;
+      letter-spacing: -0.5px;
+    }
+
+    .logout-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid white;
+      color: white;
+      padding: 0.65rem 1.25rem;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .logout-btn:hover {
+      background: white;
+      color: #667eea;
+      transform: translateY(-2px);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem 2rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+    }
+
+    .stat-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    }
+
+    .stat-info h3 {
+      font-size: 0.875rem;
+      color: #6c757d;
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-info p {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #2c3e50;
+    }
+
+    .controls {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      margin-bottom: 1.5rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .search-group {
+      display: flex;
+      gap: 1rem;
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .search-input {
+      padding: 0.85rem 1rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      flex: 1;
+      min-width: 120px;
+      transition: all 0.3s ease;
+      background: #f9fafb;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #667eea;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    .primary-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 0.85rem 1.5rem;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .primary-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .table-container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      padding: 1.25rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: #495057;
+      border-bottom: 2px solid #dee2e6;
+      letter-spacing: 0.3px;
+    }
+
+    td {
+      padding: 1.25rem 1rem;
+      border-bottom: 1px solid #f1f3f4;
+      font-size: 0.875rem;
+    }
+
+    tr:hover {
+      background: #f8f9fa;
+    }
+
+    .actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-sm {
+      padding: 0.5rem 0.875rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-edit {
+      background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+      color: white;
+      box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+    }
+
+    .btn-edit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+    }
+
+    .btn-delete {
+      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+      color: white;
+      box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+    }
+
+    .btn-delete:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+    }
+
+    .btn-visit {
+      background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+      color: white;
+      box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
+    }
+
+    .btn-visit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
+    }
+
+    .btn-history {
+      background: linear-gradient(135deg, #8e44ad 0%, #7d3c98 100%);
+      color: white;
+      box-shadow: 0 2px 8px rgba(142, 68, 173, 0.3);
+    }
+
+    .btn-history:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(142, 68, 173, 0.4);
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal {
+      background: white;
+      border-radius: 20px;
+      max-width: 550px;
+      margin: 3% auto;
+      padding: 0;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modal-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 1.75rem;
+      border-radius: 20px 20px 0 0;
+      color: white;
+    }
+
+    .modal-header h2 {
+      font-size: 1.35rem;
+      font-weight: 600;
+      margin: 0;
+      letter-spacing: -0.3px;
+    }
+
+    .modal-body {
+      padding: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-weight: 600;
+      color: #495057;
+      font-size: 0.875rem;
+      letter-spacing: 0.3px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      transition: all 0.3s ease;
+      background: #f9fafb;
+      font-family: inherit;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #667eea;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-control[readonly] {
+      background: #e9ecef;
+      color: #6c757d;
+      cursor: not-allowed;
+    }
+
+    .modal-footer {
+      padding: 1.25rem 2rem 2rem;
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+      border: none;
+      padding: 0.85rem 1.5rem;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+      background: #5a6268;
+      transform: translateY(-2px);
+    }
+
+    .history-table {
+      margin-top: 1rem;
+    }
+
+    .history-table th,
+    .history-table td {
+      padding: 1rem;
+      font-size: 0.875rem;
+    }
+
+    .patient-info {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+      padding: 1.25rem;
+      border-radius: 12px;
+      margin-bottom: 1.25rem;
+      font-size: 0.875rem;
+      border-left: 4px solid #667eea;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: #6c757d;
+    }
+
+    .empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 1rem 1rem;
+      }
+
+      .header {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .header-left {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .search-group {
+        flex-direction: column;
+        min-width: unset;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        flex-wrap: wrap;
+      }
+
+      .btn-sm {
+        font-size: 0.7rem;
+        padding: 0.4rem 0.7rem;
+      }
+
+      table {
+        font-size: 0.75rem;
+      }
+
+      th, td {
+        padding: 0.75rem 0.5rem;
+      }
+
+      .modal {
+        margin: 5% 1rem;
+        max-width: calc(100% - 2rem);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <div class="header-icon">👨‍⚕️</div>
+      <h1>Reception Dashboard</h1>
+    </div>
+    <button class="logout-btn" onclick="logout()">Sign Out</button>
+  </div>
+
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-info">
+          <h3>Total Patients</h3>
+          <p id="totalPatients">0</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📋</div>
+        <div class="stat-info">
+          <h3>Registered Today</h3>
+          <p id="todayPatients">0</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🏥</div>
+        <div class="stat-info">
+          <h3>Active Visits</h3>
+          <p id="activeVisits">0</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="search-group">
+        <input type="text" id="filterId" class="search-input" placeholder="🔍 Search by ID" oninput="filterPatients()" />
+        <input type="text" id="filterName" class="search-input" placeholder="🔍 Search by Name" oninput="filterPatients()" />
+        <input type="date" id="filterDOB" class="search-input" onchange="filterPatients()" />
+      </div>
+      <button class="primary-btn" onclick="openRegisterModal()">+ New Patient</button>
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>DOB</th>
+            <th>Gender</th>
+            <th>Address</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="patientTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Register Modal -->
+  <div id="registerModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Register New Patient</h2>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" id="regName" class="form-control" placeholder="Enter patient name" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date of Birth</label>
+          <input type="date" id="regDOB" class="form-control" onchange="calculateRegAge()" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Age</label>
+          <input type="number" id="regAge" class="form-control" readonly />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Gender</label>
+          <select id="regGender" class="form-control">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Address</label>
+          <textarea id="regAddress" class="form-control" rows="2" placeholder="Enter address"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="regEmail" class="form-control" placeholder="Enter email address" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <input type="tel" id="regPhoneNumber" class="form-control" placeholder="Enter 10-digit phone number" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Purpose of Visit</label>
+          <input type="text" id="regPurposeOfVisit" class="form-control" placeholder="e.g., General checkup, Fever" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeRegisterModal()">Cancel</button>
+        <button class="primary-btn" onclick="submitNewPatient()">Register Patient</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div id="editModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Edit Patient Information</h2>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editId" />
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" id="editName" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date of Birth</label>
+          <input type="date" id="editDOB" class="form-control" onchange="calculateAge()" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Age</label>
+          <input type="number" id="editAge" class="form-control" readonly />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Gender</label>
+          <select id="editGender" class="form-control">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Address</label>
+          <textarea id="editAddress" class="form-control" rows="2"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="primary-btn" onclick="saveEdits()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Visit Modal -->
+  <div id="visitModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Record Visit</h2>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="visitPatientId" />
+        <div class="form-group">
+          <label class="form-label">Patient ID</label>
+          <input type="text" id="visitId" class="form-control" readonly />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Patient Name</label>
+          <input type="text" id="visitName" class="form-control" readonly />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date of Birth</label>
+          <input type="date" id="visitDOB" class="form-control" readonly />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Gender</label>
+          <input type="text" id="visitGender" class="form-control" readonly />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Address</label>
+          <textarea id="visitAddress" class="form-control" rows="2" readonly></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Purpose of Visit</label>
+          <input type="text" id="visitPurpose" class="form-control" placeholder="Enter purpose of visit" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeVisitModal()">Cancel</button>
+        <button class="primary-btn" onclick="submitVisit()">Record Visit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- History Modal -->
+  <div id="historyModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Visit History</h2>
+      </div>
+      <div class="modal-body">
+        <div id="visitHistoryContent"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeHistoryModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let allPatients = [];
+
+    window.onload = () => {
+      fetch('http://localhost:5000/api/patients')
+        .then(res => res.json())
+        .then(data => {
+          allPatients = data;
+          displayPatients(data);
+          updateStats(data);
+        })
+        .catch(err => {
+          console.error('Error loading patients:', err);
+          // For demo purposes, show sample data
+          allPatients = [
+            {
+              id: 1,
+              name: "John Doe",
+              age: 35,
+              dob: "1988-06-15T00:00:00.000Z",
+              gender: "Male",
+              address: "123 Main St, City"
+            },
+            {
+              id: 2,
+              name: "Jane Smith",
+              age: 28,
+              dob: "1995-03-22T00:00:00.000Z",
+              gender: "Female",
+              address: "456 Oak Ave, Town"
+            }
+          ];
+          displayPatients(allPatients);
+          updateStats(allPatients);
+        });
+    };
+
+    function updateStats(patients) {
+      document.getElementById('totalPatients').textContent = patients.length;
+      
+      const today = new Date().toISOString().split('T')[0];
+      const todayCount = patients.filter(p => {
+        const regDate = new Date(p.dob).toISOString().split('T')[0];
+        return regDate === today;
+      }).length;
+      document.getElementById('todayPatients').textContent = todayCount;
+      
+      document.getElementById('activeVisits').textContent = Math.floor(patients.length * 0.3);
+    }
+
+    function displayPatients(patients) {
+      const tableBody = document.getElementById('patientTableBody');
+      if (patients.length === 0) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="7">
+              <div class="empty-state">
+                <div class="empty-state-icon">📋</div>
+                <p>No patients found</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+      
+      tableBody.innerHTML = '';
+      patients.forEach(patient => {
+        const dobOnly = patient.dob.split('T')[0];
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><strong>#${patient.id}</strong></td>
+          <td>${patient.name}</td>
+          <td>${patient.age}</td>
+          <td>${dobOnly}</td>
+          <td>${patient.gender}</td>
+          <td>${patient.address}</td>
+          <td class="actions">
+            <button class="btn-sm btn-edit" onclick="openEditModal(${patient.id})">Edit</button>
+            <button class="btn-sm btn-delete" onclick="deletePatient(${patient.id})">Delete</button>
+            <button class="btn-sm btn-visit" onclick="addVisit(${patient.id})">Visit</button>
+            <button class="btn-sm btn-history" onclick="viewVisitHistory(${patient.id})">History</button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    function openRegisterModal() {
+      document.getElementById('regName').value = '';
+      document.getElementById('regDOB').value = '';
+      document.getElementById('regAge').value = '';
+      document.getElementById('regAddress').value = '';
+      document.getElementById('regGender').value = 'Male';
+      document.getElementById('regEmail').value = '';
+      document.getElementById('regPhoneNumber').value = '';
+      document.getElementById('regPurposeOfVisit').value = '';
+      document.getElementById('registerModal').style.display = 'block';
+    }
+
+    function closeRegisterModal() {
+      document.getElementById('registerModal').style.display = 'none';
+    }
+
+    function calculateRegAge() {
+      const dobInput = document.getElementById('regDOB').value;
+      const ageInput = document.getElementById('regAge');
+      if (dobInput) {
+        const dob = new Date(dobInput);
+        const today = new Date();
+        let age = today.getFullYear() - dob.getFullYear();
+        const m = today.getMonth() - dob.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+        ageInput.value = age;
+      } else {
+        ageInput.value = '';
+      }
+    }
+
+    function submitNewPatient() {
+      const name = document.getElementById('regName').value.trim();
+      const dob = document.getElementById('regDOB').value;
+      const age = document.getElementById('regAge').value;
+      const address = document.getElementById('regAddress').value.trim();
+      const gender = document.getElementById('regGender').value;
+      const email = document.getElementById('regEmail').value.trim();
+      const phone_number = document.getElementById('regPhoneNumber').value.trim();
+      const purpose_of_visit = document.getElementById('regPurposeOfVisit').value.trim();
+
+      if (!name || !dob || !address || !gender || !email || !phone_number || !purpose_of_visit) {
+        alert('Please fill in all fields.');
+        return;
+      }
+      
+      if (!/^\d{10}$/.test(phone_number)) {
+        alert('Please enter a valid 10-digit phone number.');
+        return;
+      }
+
+      fetch('http://localhost:5000/api/patients/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name, dob, age, address, gender, email, phone_number, purpose_of_visit
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.message && data.message.includes('registered successfully')) {
+          alert('✅ Patient registered successfully!');
+          closeRegisterModal();
+          window.location.reload();
+        } else {
+          alert('❌ Error: ' + (data.error || 'Something went wrong'));
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert('❌ Failed to register patient');
+      });
+    }
+
+    function viewVisitHistory(patientId) {
+      fetch(`http://localhost:5000/api/visits/${patientId}`)
+        .then(res => {
+          if (!res.ok) throw new Error("No visits found.");
+          return res.json();
+        })
+        .then(data => {
+          const container = document.getElementById('visitHistoryContent');
+          container.innerHTML = '';
+          if (data.length === 0) {
+            container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><p>No visit history available.</p></div>';
+          } else {
+            const dobOnly = data[0].dob.split('T')[0];
+            const patientInfo = `
+              <div class="patient-info">
+                <strong>Patient:</strong> ${data[0].name} &nbsp;|&nbsp; 
+                <strong>Age:</strong> ${data[0].age} &nbsp;|&nbsp; 
+                <strong>DOB:</strong> ${dobOnly}
+              </div>
+            `;
+            const table = document.createElement('table');
+            table.className = 'history-table';
+            table.style.width = '100%';
+            table.style.borderCollapse = 'collapse';
+            table.innerHTML = `
+              <thead>
+                <tr style="background: #f8f9fa;">
+                  <th style="padding: 1rem; border: 1px solid #dee2e6; border-radius: 8px 0 0 0;">Purpose of Visit</th>
+                  <th style="padding: 1rem; border: 1px solid #dee2e6; border-radius: 0 8px 0 0;">Date & Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${data.map(v => `
+                  <tr>
+                    <td style="padding: 1rem; border: 1px solid #dee2e6;">${v.purpose_of_visit}</td>
+                    <td style="padding: 1rem; border: 1px solid #dee2e6;">${new Date(v.visit_datetime).toLocaleString()}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            `;
+            container.innerHTML = patientInfo;
+            container.appendChild(table);
+          }
+          document.getElementById('historyModal').style.display = 'block';
+        })
+        .catch(() => {
+          document.getElementById('visitHistoryContent').innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><p>No visit history available.</p></div>';
+          document.getElementById('historyModal').style.display = 'block';
+        });
+    }
+
+    function closeHistoryModal() {
+      document.getElementById('historyModal').style.display = 'none';
+    }
+
+    function filterPatients() {
+      const id = document.getElementById('filterId').value.toLowerCase();
+      const name = document.getElementById('filterName').value.toLowerCase();
+      const dob = document.getElementById('filterDOB').value;
+      const filtered = allPatients.filter(p =>
+        p.id.toString().includes(id) &&
+        p.name.toLowerCase().includes(name) &&
+        (dob ? p.dob.split('T')[0] === dob : true)
+      );
+      displayPatients(filtered);
+    }
+
+    function openEditModal(id) {
+      fetch(`http://localhost:5000/api/patients/${id}`)
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('editId').value = data.id;
+          document.getElementById('editName').value = data.name;
+          document.getElementById('editDOB').value = data.dob.split('T')[0];
+          document.getElementById('editGender').value = data.gender;
+          document.getElementById('editAddress').value = data.address;
+          calculateAge();
+          document.getElementById('editModal').style.display = 'block';
+        })
+        .catch(err => {
+          console.error('Error loading patient:', err);
+          alert('Failed to load patient information');
+        });
+    }
+
+    function closeModal() {
+      document.getElementById('editModal').style.display = 'none';
+    }
+
+    function saveEdits() {
+      const id = document.getElementById('editId').value;
+      const updatedData = {
+        name: document.getElementById('editName').value,
+        age: document.getElementById('editAge').value,
+        dob: document.getElementById('editDOB').value,
+        gender: document.getElementById('editGender').value,
+        address: document.getElementById('editAddress').value
+      };
+      
+      fetch(`http://localhost:5000/api/patients/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedData)
+      })
+      .then(() => {
+        alert('✅ Patient updated successfully!');
+        closeModal();
+        window.location.reload();
+      })
+      .catch(err => {
+        console.error('Error updating patient:', err);
+        alert('❌ Failed to update patient');
+      });
+    }
+
+    function calculateAge() {
+      const dobInput = document.getElementById('editDOB').value;
+      const ageInput = document.getElementById('editAge');
+      if (dobInput) {
+        const dob = new Date(dobInput);
+        const today = new Date();
+        let age = today.getFullYear() - dob.getFullYear();
+        const m = today.getMonth() - dob.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+        ageInput.value = age;
+      } else {
+        ageInput.value = '';
+      }
+    }
+
+    function deletePatient(id) {
+      if (confirm('Are you sure you want to delete this patient? This action cannot be undone.')) {
+        fetch(`http://localhost:5000/api/patients/${id}`, {
+          method: 'DELETE'
+        })
+        .then(() => {
+          alert('✅ Patient deleted successfully');
+          allPatients = allPatients.filter(p => p.id !== id);
+          displayPatients(allPatients);
+          updateStats(allPatients);
+        })
+        .catch(err => {
+          console.error('Error deleting patient:', err);
+          alert('❌ Failed to delete patient');
+        });
+      }
+    }
+
+    function addVisit(id) {
+      fetch(`http://localhost:5000/api/patients/${id}`)
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('visitPatientId').value = data.id;
+          document.getElementById('visitId').value = data.id;
+          document.getElementById('visitName').value = data.name;
+          document.getElementById('visitDOB').value = data.dob.split('T')[0];
+          document.getElementById('visitGender').value = data.gender;
+          document.getElementById('visitAddress').value = data.address;
+          document.getElementById('visitPurpose').value = '';
+          document.getElementById('visitModal').style.display = 'block';
+        })
+        .catch(err => {
+          console.error('Error loading patient:', err);
+          alert('Failed to load patient information');
+        });
+    }
+
+    function closeVisitModal() {
+      document.getElementById('visitModal').style.display = 'none';
+    }
+
+    function submitVisit() {
+      const patient_id = document.getElementById('visitPatientId').value;
+      const purpose = document.getElementById('visitPurpose').value.trim();
+      
+      if (!purpose) {
+        alert('Please enter a purpose of visit.');
+        return;
+      }
+      
+      fetch('http://localhost:5000/api/visits', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ patient_id, purpose_of_visit: purpose })
+      })
+      .then(() => {
+        alert('✅ Visit recorded successfully!');
+        closeVisitModal();
+      })
+      .catch(err => {
+        console.error('Error recording visit:', err);
+        alert('❌ Failed to record visit');
+      });
+    }
+
+    function logout() {
+      if (confirm('Are you sure you want to sign out?')) {
+        window.location.href = "../index.html";
+      }
+    }
+
+    // Close modals when clicking outside
+    window.onclick = function(event) {
+      const modals = ['registerModal', 'editModal', 'visitModal', 'historyModal'];
+      modals.forEach(modalId => {
+        const modal = document.getElementById(modalId);
+        if (event.target === modal) {
+          modal.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>
